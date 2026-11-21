@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Khám phá môn học | SmartCourse{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">COURSE EXPLORER</div>
+  <h1>Khám phá môn học</h1>
+  <p class="muted">Tìm kiếm và lọc danh mục hiện có trong dữ liệu SmartCourse.</p>
+</div>
+
+<form method="get" class="panel filter-form">
+  <div class="filter-search">
+    <label class="field-label" for="q">Tìm theo tên môn, mã môn hoặc mô tả</label>
+    <input id="q" name="q" value="{{ query }}" placeholder="Ví dụ: học máy, cơ sở dữ liệu...">
+  </div>
+  <div>
+    <label class="field-label" for="category">Nhóm chủ đề</label>
+    <select id="category" name="category">
+      <option>Tất cả</option>
+      {% for item in categories %}<option value="{{ item }}" {% if category == item %}selected{% endif %}>{{ item }}</option>{% endfor %}
+    </select>
+  </div>
+  <div>
+    <label class="field-label" for="verification">Trạng thái dữ liệu</label>
+    <select id="verification" name="verification">
+      {% for item in ["Tất cả", "Theo lộ trình", "Môn bổ sung chưa xác minh"] %}
+        <option {% if verification == item %}selected{% endif %}>{{ item }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="button" type="submit">Lọc môn học</button>
+</form>
+
+<p class="result-count">Tìm thấy <b>{{ results|length }}</b> môn học</p>
+{% if not results %}
+  <div class="panel empty-state">Không có môn nào khớp bộ lọc. Hãy thử từ khóa khác.</div>
+{% else %}
+  {% for row in results %}
+    <article class="course-card">
+      <div class="eyebrow">{{ row.ma_mon or "MÔN BỔ SUNG" }}</div>
+      <h3>{{ row.ten_mon }}</h3>
+      <div class="tags">
+        <span class="tag">{{ row.nhom_chu_de }}</span>
+        <span class="tag">{{ (row.so_tin_chi|string) + " tín chỉ" if row.so_tin_chi else "Chưa có tín chỉ" }}</span>
+        <span class="tag">{{ row.hoc_ky_goi_y or "Chưa xác định học kỳ" }}</span>
+      </div>
+      <p class="muted">{{ row.mo_ta }}</p>
+      <p class="detail"><b>Tiên quyết:</b> {{ row.mon_tien_quyet or "Chưa ghi nhận trong dữ liệu" }}</p>
+      <span class="tag">{{ "Chưa xác minh theo lộ trình" if row.trang_thai_xac_minh == "ten_bo_sung_chua_xac_minh" else "Theo dữ liệu lộ trình" }}</span>
+    </article>
+  {% endfor %}
+{% endif %}
+{% endblock %}

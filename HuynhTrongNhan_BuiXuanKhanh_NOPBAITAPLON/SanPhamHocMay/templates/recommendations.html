@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Gợi ý môn học | SmartCourse{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">RECOMMENDATION ENGINE</div>
+  <h1>Môn học dành cho bạn</h1>
+  <p class="muted">Kết quả dựa trên chủ đề quan tâm, mục tiêu, mức kiến thức và dữ liệu tiên quyết hiện có.</p>
+</div>
+
+<div class="stats-grid compact">
+  <div class="stat"><strong>{{ results|length }}</strong><span>Môn được hiển thị</span></div>
+  <div class="stat"><strong>{{ interest_count }}</strong><span>Chủ đề đã chọn</span></div>
+  <div class="stat"><strong>{{ completed_count }}</strong><span>Môn đã hoàn thành</span></div>
+</div>
+
+<div class="section-title-row">
+  <h2>Danh sách đề xuất</h2>
+  <a class="button button-secondary" href="{{ url_for('export_recommendations') }}">Tải CSV ↓</a>
+</div>
+<p class="hint">Điểm là điểm xếp hạng theo quy tắc của bản thử nghiệm, không phải xác suất bạn sẽ thành công.</p>
+
+{% if not results %}
+  <div class="panel empty-state">Không tìm thấy môn phù hợp với hồ sơ hiện tại.</div>
+{% else %}
+  {% for row in results %}
+    <article class="course-card">
+      <div class="course-top">
+        <div>
+          <div class="eyebrow">{{ row.ma_mon or "MÔN BỔ SUNG" }}</div>
+          <h3>{{ row.ten_mon }}</h3>
+          <div class="tags">
+            <span class="tag">{{ row.nhom_chu_de }}</span>
+            <span class="tag">{{ (row.so_tin_chi|string) + " tín chỉ" if row.so_tin_chi else "Chưa có tín chỉ" }}</span>
+            <span class="tag">{{ row.hoc_ky_goi_y or "Chưa xác định học kỳ" }}</span>
+          </div>
+        </div>
+        <div class="score">{{ "%.0f"|format(row.diem_goi_y|float) }}<small>/ 100 điểm</small></div>
+      </div>
+      <p class="muted">{{ row.mo_ta }}</p>
+      <span class="tag">{{ "Chưa xác minh theo lộ trình" if row.trang_thai_xac_minh == "ten_bo_sung_chua_xac_minh" else "Theo dữ liệu lộ trình" }}</span>
+      {% if row.trang_thai_tien_quyet %}<p class="detail"><b>Tiên quyết:</b> {{ row.trang_thai_tien_quyet }}</p>{% endif %}
+      {% if row.mon_tien_quyet_thieu %}<p class="detail"><b>Môn tiên quyết còn thiếu:</b> {{ row.mon_tien_quyet_thieu }}</p>{% endif %}
+      {% if row.ly_do_goi_y %}<p class="detail"><b>Vì sao được gợi ý:</b> {{ row.ly_do_goi_y }}</p>{% endif %}
+    </article>
+  {% endfor %}
+{% endif %}
+{% endblock %}

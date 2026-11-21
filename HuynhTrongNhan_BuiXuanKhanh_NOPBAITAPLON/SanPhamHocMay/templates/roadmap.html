@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Lộ trình trực quan | SmartCourse{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">YOUR LEARNING ROADMAP</div>
+  <h1>Lộ trình học tập trực quan</h1>
+  <p class="muted">Xem các môn theo học kỳ, theo dõi tiến độ và đối chiếu những môn tiên quyết đã được ghi nhận trong dữ liệu.</p>
+</div>
+
+<div class="roadmap-intro">
+  <b>Biến lộ trình thành của riêng bạn</b>
+  <p class="muted">Chọn các môn đã hoàn thành để cập nhật tiến độ. Chỉ sử dụng quan hệ tiên quyết có trong dữ liệu, không tự suy đoán.</p>
+</div>
+
+<form method="post" class="panel progress-form">
+  <label class="field-label">Các môn đã hoàn thành</label>
+  <p class="hint">Giữ Ctrl (Windows) hoặc Command (Mac) để chọn nhiều môn.</p>
+  <select name="completed_courses" multiple size="7">
+    {% for row in course_options %}
+      <option value="{{ row.ma_mon }}" {% if row.ma_mon in profile.completed_courses %}selected{% endif %}>{{ row.ma_mon }} — {{ row.ten_mon }}</option>
+    {% endfor %}
+  </select>
+  <button class="button" type="submit">Lưu tiến độ học tập</button>
+</form>
+
+<div class="stats-grid">
+  <div class="stat"><strong>{{ done }}/{{ total }}</strong><span>Môn đã hoàn thành</span></div>
+  <div class="stat"><strong>{{ done_credits|round(1) }}</strong><span>Tín chỉ đã hoàn thành</span></div>
+  <div class="stat"><strong>{{ progress }}%</strong><span>Tiến độ danh mục</span></div>
+</div>
+<div class="progress-track"><div class="progress-fill" style="width: {{ progress }}%"></div></div>
+<p class="hint">Tiến độ tính trên danh mục đang hiển thị, không phải tiến độ tốt nghiệp chính thức.</p>
+
+<div class="section-title-row">
+  <h2>Sơ đồ môn tiên quyết</h2>
+  <a class="text-link" href="{{ url_for('roadmap', all=0 if include_unverified else 1) }}">{{ "Ẩn" if include_unverified else "Hiện" }} môn bổ sung chưa xác minh</a>
+</div>
+{% if edges %}
+  <div class="panel">
+    {% for edge in edges %}
+      <div class="edge-row"><span>{{ edge.source }}</span><b>→</b><span>{{ edge.target }}</span></div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="panel muted">Chưa có đủ quan hệ môn tiên quyết giữa các môn đang hiển thị để tạo sơ đồ.</div>
+{% endif %}
+
+{% for semester in semesters %}
+  <section class="semester-section">
+    <div class="semester-heading">
+      <h2>{{ semester.name }}</h2>
+      <span>{{ semester.done }}/{{ semester.rows|length }} môn hoàn thành · {{ semester.credits|round(1) }} tín chỉ</span>
+    </div>
+    <div class="course-grid">
+      {% for row in semester.rows %}
+        {% set is_done = row.ma_mon|string|trim in profile.completed_courses %}
+        <article class="roadmap-node {% if is_done %}done{% elif row.trang_thai_xac_minh == 'ten_bo_sung_chua_xac_minh' %}pending{% endif %}">
+          <div class="eyebrow">{{ row.ma_mon or "MÔN BỔ SUNG" }}</div>
+          <h3>{{ row.ten_mon }}</h3>
+          <p class="muted">{{ row.nhom_chu_de }} · {{ row.so_tin_chi or "Chưa rõ" }} tín chỉ</p>
+          <p class="detail">Tiên quyết: {{ row.mon_tien_quyet or "Chưa ghi nhận" }}</p>
+          <span class="status">{% if is_done %}✓ ĐÃ HOÀN THÀNH{% elif row.trang_thai_xac_minh == 'ten_bo_sung_chua_xac_minh' %}! CHƯA XÁC MINH{% else %}○ CHƯA HOÀN THÀNH{% endif %}</span>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% endfor %}
+<div class="notice warning">SmartCourse là bản thử nghiệm hỗ trợ tham khảo. Hãy đối chiếu học kỳ, môn tiên quyết và điều kiện đăng ký với chương trình chính thức của trường.</div>
+{% endblock %}

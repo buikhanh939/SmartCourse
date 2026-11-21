@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Tạo lộ trình | SmartCourse{% endblock %}
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">PERSONAL LEARNING PROFILE</div>
+  <h1>Tạo lộ trình của bạn</h1>
+  <p class="muted">Cung cấp một vài thông tin để SmartCourse đề xuất môn học sát với nhu cầu hơn.</p>
+</div>
+
+<form method="post" class="panel form-panel">
+  <label class="field-label">Bạn đang ở giai đoạn nào?</label>
+  <div class="choice-row">
+    <label class="choice"><input type="radio" name="student_mode" value="new"> Sinh viên mới / đang tìm hiểu</label>
+    <label class="choice"><input type="radio" name="student_mode" value="current" checked> Sinh viên hiện tại</label>
+  </div>
+
+  <label class="field-label">Chủ đề bạn quan tâm</label>
+  <p class="hint">Có thể chọn nhiều chủ đề.</p>
+  <div class="check-grid">
+    {% for item in categories %}
+      <label class="check-option">
+        <input type="checkbox" name="interests" value="{{ item }}" {% if item in selected_interests %}checked{% endif %}>
+        <span>{{ item }}</span>
+      </label>
+    {% endfor %}
+  </div>
+
+  <label class="field-label" for="goal_text">Mục tiêu học tập</label>
+  <textarea id="goal_text" name="goal_text" rows="4" placeholder="Ví dụ: Mình muốn học máy, phân tích dữ liệu và xây dựng mô hình AI...">{{ profile.goal_text }}</textarea>
+
+  <label class="field-label" for="knowledge_level">Mức kiến thức hiện tại</label>
+  <select id="knowledge_level" name="knowledge_level">
+    <option value="co_ban" {% if profile.knowledge_level == 'co_ban' %}selected{% endif %}>Cơ bản</option>
+    <option value="trung_binh" {% if profile.knowledge_level == 'trung_binh' %}selected{% endif %}>Trung bình</option>
+    <option value="kha" {% if profile.knowledge_level == 'kha' %}selected{% endif %}>Khá</option>
+  </select>
+
+  <label class="field-label" for="current_semester">Học kỳ hiện tại (nếu đã biết)</label>
+  <select id="current_semester" name="current_semester">
+    <option value="">Chưa chọn</option>
+    {% for n in range(1, 7) %}
+      <option value="{{ n }}" {% if profile.current_semester == n %}selected{% endif %}>{{ n }}</option>
+    {% endfor %}
+  </select>
+
+  <div id="completedCourses">
+    <label class="field-label">Các môn bạn đã hoàn thành</label>
+    <p class="hint">Giữ phím Ctrl (Windows) hoặc Command (Mac) để chọn nhiều môn.</p>
+    <select name="completed_courses" multiple size="7">
+      {% for item in course_options %}
+        <option value="{{ item.code }}" {% if item.code in selected_courses %}selected{% endif %}>{{ item.code }} — {{ item.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="button" type="submit">Tạo gợi ý cho tôi ✦</button>
+</form>
+{% endblock %}

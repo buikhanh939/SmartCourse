@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}SmartCourse | Your Learning Path{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="eyebrow">AI-POWERED LEARNING COMPANION</div>
+  <h1>Your Future.<br>Your Learning Path.</h1>
+  <p class="hero-subtitle">Khám phá những môn học phù hợp với sở thích, mục tiêu và kiến thức hiện tại. Từng bước xây dựng lộ trình học tập của riêng bạn cùng SmartCourse.</p>
+  <a class="button" href="{{ url_for('profile') }}">Bắt đầu xây dựng lộ trình <span>→</span></a>
+</section>
+
+<section class="intro-grid">
+  <div>
+    <div class="eyebrow">LEARN WITH DIRECTION</div>
+    <h2>Học có định hướng.<br>Tiến xa hơn.</h2>
+    <p class="muted">SmartCourse kết hợp phân loại chủ đề bằng Naive Bayes và bộ quy tắc gợi ý để giúp sinh viên CNTT khám phá môn học, nhận biết kiến thức nền và xem xét các môn tiên quyết đã được ghi nhận.</p>
+  </div>
+  <div class="panel feature-panel">
+    <div class="feature"><span>✦</span><div><h3>Cá nhân hóa</h3><p class="muted">Chọn chủ đề và mục tiêu học tập của bạn.</p></div></div>
+    <div class="feature"><span>⌘</span><div><h3>Gợi ý thông minh</h3><p class="muted">Xem điểm phù hợp cùng lý do đề xuất.</p></div></div>
+    <div class="feature"><span>⌁</span><div><h3>Lộ trình rõ ràng</h3><p class="muted">Theo dõi môn đã học và thông tin tiên quyết.</p></div></div>
+  </div>
+</section>
+
+<section class="stats-grid">
+  <div class="stat"><strong>{{ course_count }}</strong><span>Môn học trong dữ liệu</span></div>
+  <div class="stat"><strong>{{ topic_count }}</strong><span>Mẫu phân loại chủ đề</span></div>
+  <div class="stat"><strong>{{ category_count }}</strong><span>Nhóm chủ đề</span></div>
+</section>
+{% endblock %}

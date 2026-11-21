@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SmartCourse{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">✦ Smart<span>Course</span></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Mở menu">☰</button>
+    <nav class="nav" id="mainNav">
+      <a href="{{ url_for('index') }}">Trang chủ</a>
+      <a href="{{ url_for('profile') }}">Tạo lộ trình</a>
+      <a href="{{ url_for('roadmap') }}">Lộ trình trực quan</a>
+      <a href="{{ url_for('recommendation_page') }}">Gợi ý môn học</a>
+      <a href="{{ url_for('course_explorer') }}">Khám phá môn học</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="notice {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    SMARTCOURSE · BẢN THỬ NGHIỆM HỌC TẬP · DỮ LIỆU CẦN ĐƯỢC ĐỐI CHIẾU VỚI CHƯƠNG TRÌNH CHÍNH THỨC
+  </footer>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
